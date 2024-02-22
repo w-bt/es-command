@@ -1,0 +1,59 @@
+package command
+
+import (
+	"crm-es/pkg/logger"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+)
+
+func Validate(indexName string, threshold int) {
+	validate(indexName, threshold)
+	logger.Infof("SUCCESS")
+}
+
+func validate(indexName string, threshold int) error {
+	awsResult, err := searchIndex(indexName, nil, threshold, sortDESC)
+	if err != nil {
+		return err
+	}
+	//ci := goccm.New(10)
+	for _, doc = range awsResult {
+		// get doc aws
+		// get doc alicloud
+		// compare
+	}
+
+	return nil
+}
+
+func search(indexName, docType, docID, routeKey string) ([]byte, error) {
+	docType = url.QueryEscape(docType)
+	routeParam := ""
+	if routeKey != "" {
+		routeParam = "?routing=" + routeKey
+	}
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s/%s/%s%s", destHostName, indexName, docType, docID, routeParam), nil)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	rawResp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer rawResp.Body.Close()
+
+	bodyResult, err := ioutil.ReadAll(rawResp.Body)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	logger.Infof("Successfully indexing %s with id %+v, resp: %+v", indexName, docID, string(bodyResult))
+
+	return bodyResult, nil
+}

@@ -1,0 +1,14 @@
+crm-es
+.idea
+log/application.log
+reindex_response.json
+merge_response.json
+last_reindex.json
+last_merge.json
+aliases_back.json
+threshold.json
+recovery_done.json
+recovery_in_progress.json
+todo.txt
+processed_index.txt
+processed_index_v2.txt
