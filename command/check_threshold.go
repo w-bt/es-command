@@ -13,21 +13,15 @@ import (
 )
 
 const (
-	CreatedAtOnly   = "created_at"
-	UpdatedAtOnly   = "updated_at"
-	CallTimeOnly    = "call_time"
-	DealWonAtOnly   = "deal_won_at"
-	SubmittedAtOnly = "submitted_at"
-	OtherThreshold  = "other"
+	CreatedAtOnly  = "created_at"
+	UpdatedAtOnly  = "updated_at"
+	OtherThreshold = "other"
 )
 
 type Threshold struct {
-	CreatedAtOnly   map[string]bool
-	UpdatedAtOnly   map[string]bool
-	CallTimeOnly    map[string]bool
-	DealWonAtOnly   map[string]bool
-	SubmittedAtOnly map[string]bool
-	Other           map[string]bool
+	CreatedAtOnly map[string]bool
+	UpdatedAtOnly map[string]bool
+	Other         map[string]bool
 }
 
 func CheckThreshold() {
@@ -46,9 +40,6 @@ func CheckThreshold() {
 func checkThresholds(aliases []IndexAlias) (threshold Threshold) {
 	threshold.CreatedAtOnly = make(map[string]bool)
 	threshold.UpdatedAtOnly = make(map[string]bool)
-	threshold.CallTimeOnly = make(map[string]bool)
-	threshold.DealWonAtOnly = make(map[string]bool)
-	threshold.SubmittedAtOnly = make(map[string]bool)
 	threshold.Other = make(map[string]bool)
 	for _, item := range aliases {
 		resultBool, err := checkThreshold(item.Alias)
@@ -61,12 +52,6 @@ func checkThresholds(aliases []IndexAlias) (threshold Threshold) {
 			threshold.UpdatedAtOnly[item.Alias] = true
 		case CreatedAtOnly:
 			threshold.CreatedAtOnly[item.Alias] = true
-		case CallTimeOnly:
-			threshold.CallTimeOnly[item.Alias] = true
-		case DealWonAtOnly:
-			threshold.DealWonAtOnly[item.Alias] = true
-		case SubmittedAtOnly:
-			threshold.SubmittedAtOnly[item.Alias] = true
 		case OtherThreshold:
 			threshold.Other[item.Alias] = true
 		}
@@ -108,21 +93,6 @@ func checkThreshold(index string) (string, error) {
 	boolResult = strings.Contains(jsonString, "created_at")
 	if boolResult {
 		return CreatedAtOnly, nil
-	}
-
-	boolResult = strings.Contains(jsonString, "call_time")
-	if boolResult {
-		return CallTimeOnly, nil
-	}
-
-	boolResult = strings.Contains(jsonString, "deal_won_at")
-	if boolResult {
-		return DealWonAtOnly, nil
-	}
-
-	boolResult = strings.Contains(jsonString, "submitted_at")
-	if boolResult {
-		return SubmittedAtOnly, nil
 	}
 
 	return OtherThreshold, nil
@@ -168,21 +138,6 @@ func checkThresholdAndOrganization(index string) (string, bool, error) {
 	boolResult = strings.Contains(jsonString, "created_at")
 	if boolResult {
 		return CreatedAtOnly, hasOrganizationID, nil
-	}
-
-	boolResult = strings.Contains(jsonString, "call_time")
-	if boolResult {
-		return CallTimeOnly, hasOrganizationID, nil
-	}
-
-	boolResult = strings.Contains(jsonString, "deal_won_at")
-	if boolResult {
-		return DealWonAtOnly, hasOrganizationID, nil
-	}
-
-	boolResult = strings.Contains(jsonString, "submitted_at")
-	if boolResult {
-		return SubmittedAtOnly, hasOrganizationID, nil
 	}
 
 	return OtherThreshold, hasOrganizationID, nil
